@@ -22,7 +22,7 @@ int PrInputA = 150; // value of when light is on
 int PrInputB = 70;
 
 // How many leds in your strip?
-#define NUM_LEDS 4
+#define NUM_LEDS 10
 #define DATA_PIN 3
 #define CLOCK_PIN 13
 
@@ -68,7 +68,7 @@ if ((PrValue > (PrInputA+startupValue)) && (millis()-lastReading>=sampleRate)) /
 
   FastLED.show();
   lastReading = millis();
-   delay(5000);
+   delay(2000);
 }
 else if(PrValue > (startupValue+PrInputB) ) // above 20seconds
 {
@@ -79,7 +79,7 @@ else if(PrValue > (startupValue+PrInputB) ) // above 20seconds
       }
 
   FastLED.show();
-  delay(5000);
+  delay(600);
 }
 else
 {
