@@ -1,10 +1,5 @@
-// In this version I'm going to remove switch and use a timer function with a simple Else if statement
-// As we have three parameters this may be a better solution
-// We want the code to do the following
-// Start the device if it is OFF, turn to ON when above 250
-// If ON and light is above 250 turn green
-// If ON and timer is above 2seconds and below 3seconds turn Orange [ Reset timer in loop if light is above 250 ]
-// Else  turn light Red [ Reset timer in loop if light is above 250 ]
+//I added more functionality using the If then statement for calibiration but it has not worked as indtended
+// So I'm using ver 3 as there is no time to go back debug for now
 
 #include <Event.h>
 #include <FastLED.h>
