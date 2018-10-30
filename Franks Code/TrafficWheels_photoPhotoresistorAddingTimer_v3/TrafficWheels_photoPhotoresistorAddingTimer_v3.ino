@@ -1,5 +1,3 @@
-// wWe did not use this one Just V3
-
 // In this version I'm going to remove switch and use a timer function with a simple Else if statement
 // As we have three parameters this may be a better solution
 // We want the code to do the following
@@ -17,18 +15,19 @@
 
 //photoresistor A Style Tech.
 
-int Pr = 0; // will be used for analog 0.
-int PrValue = 50; // value of output
-int PrInputA = 250; // value of when light is on
-int PrInputB = 136;
+int Pr = A0; // will be used for analog 0.
+int startupValue; // start Value
+int PrValue = 20; // value of output
+int PrInputA = 150; // value of when light is on
+int PrInputB = 70;
 
 // How many leds in your strip?
-#define NUM_LEDS 12
+#define NUM_LEDS 10
 #define DATA_PIN 3
 #define CLOCK_PIN 13
 
 int sampleRate = 2000;// how much time has passed for green
-int sampleRateB = 3500;
+int sampleRateB = 3500; // how much time since Orange
 long lastReading; // used for timer
 
 // Define the array of leds
@@ -39,9 +38,10 @@ void setup() {
     Serial.begin(9600); //start serial Monitor
     pinMode(8, OUTPUT); // pin 8 as output
      
-     // Led control below
-        FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
-      
+    // Led control below
+    FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+
+    int startupValue = analogRead(Pr);  //read the  start value from the light sensor     
 }
 
 
@@ -51,12 +51,14 @@ void setup() {
 // Else  turn light Red [ Reset timer in loop if light is above 250 ]
 void loop() { 
 
+int currentLightValue = analogRead(Pr);  //read the value from the light sensor 
+
 PrValue = analogRead(Pr);
 
 Serial.println(PrValue); //prints photoresistor value so we can see it to debug code
    
 
-if((PrValue > PrInputA) && (millis()-lastReading>=sampleRate)) // timer starts
+if ((PrValue > (PrInputA+startupValue)) && (millis()-lastReading>=sampleRate)) // timer starts
 {
   digitalWrite(8, HIGH);
     // Turn the LED on, then pause
@@ -66,9 +68,9 @@ if((PrValue > PrInputA) && (millis()-lastReading>=sampleRate)) // timer starts
 
   FastLED.show();
   lastReading = millis();
-   delay(4000);
+   delay(2000);
 }
-else if((PrValue > PrInputB) ) // above 2mins
+else if(PrValue > (startupValue+PrInputB) ) // above 20seconds
 {
   digitalWrite(8, HIGH);
     // Turn the LED on, then pause
@@ -77,6 +79,7 @@ else if((PrValue > PrInputB) ) // above 2mins
       }
 
   FastLED.show();
+  delay(600);
 }
 else
 {

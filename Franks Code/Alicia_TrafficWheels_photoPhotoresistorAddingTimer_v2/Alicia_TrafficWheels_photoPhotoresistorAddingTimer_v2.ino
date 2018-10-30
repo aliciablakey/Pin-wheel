@@ -1,5 +1,3 @@
-// wWe did not use this one Just V3
-
 // In this version I'm going to remove switch and use a timer function with a simple Else if statement
 // As we have three parameters this may be a better solution
 // We want the code to do the following
@@ -23,7 +21,7 @@ int PrInputA = 250; // value of when light is on
 int PrInputB = 136;
 
 // How many leds in your strip?
-#define NUM_LEDS 12
+#define NUM_LEDS 30
 #define DATA_PIN 3
 #define CLOCK_PIN 13
 
@@ -62,6 +60,7 @@ if((PrValue > PrInputA) && (millis()-lastReading>=sampleRate)) // timer starts
     // Turn the LED on, then pause
     for ( int i = 0; i < NUM_LEDS; i++) {
     leds[i] = CRGB::Green;
+    
       }
 
   FastLED.show();

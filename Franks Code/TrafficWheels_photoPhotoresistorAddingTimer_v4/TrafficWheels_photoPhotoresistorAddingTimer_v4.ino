@@ -1,12 +1,5 @@
-// wWe did not use this one Just V3
-
-// In this version I'm going to remove switch and use a timer function with a simple Else if statement
-// As we have three parameters this may be a better solution
-// We want the code to do the following
-// Start the device if it is OFF, turn to ON when above 250
-// If ON and light is above 250 turn green
-// If ON and timer is above 2seconds and below 3seconds turn Orange [ Reset timer in loop if light is above 250 ]
-// Else  turn light Red [ Reset timer in loop if light is above 250 ]
+//I added more functionality using the If then statement for calibiration but it has not worked as indtended
+// So I'm using ver 3 as there is no time to go back debug for now
 
 #include <Event.h>
 #include <FastLED.h>
@@ -17,31 +10,45 @@
 
 //photoresistor A Style Tech.
 
-int Pr = 0; // will be used for analog 0.
-int PrValue = 50; // value of output
-int PrInputA = 250; // value of when light is on
-int PrInputB = 136;
+int Pr = A0; // will be used for analog 0.
+int startupValue; // start Value
+int PrValue = 0; // value of output
+int PrInputA = 0; // value of when light is on
+int PrInputB = 0; // when light is Red
+
 
 // How many leds in your strip?
-#define NUM_LEDS 12
+#define NUM_LEDS 30
 #define DATA_PIN 3
 #define CLOCK_PIN 13
 
 int sampleRate = 2000;// how much time has passed for green
-int sampleRateB = 3500;
+int sampleRateB = 3500; // how much time since Orange
 long lastReading; // used for timer
 
 // Define the array of leds
 CRGB leds[NUM_LEDS];
 
 void setup() { 
+  int startupValue = analogRead(Pr);  //read the  start value from the light sensor
+  if (startupValue < 19) {
+  int PrValue = 20; // value of output
+  int PrInputA = 100; // value of when light is on
+  int PrInputB = 40;
+}
+else {
+    int PrValue = 30; // value of output
+    int PrInputA = 100; // value of when light is on
+    int PrInputB = 50;
+}
     //photoresistor start
     Serial.begin(9600); //start serial Monitor
     pinMode(8, OUTPUT); // pin 8 as output
      
-     // Led control below
-        FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
-      
+    // Led control below
+    FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+
+         
 }
 
 
@@ -56,7 +63,7 @@ PrValue = analogRead(Pr);
 Serial.println(PrValue); //prints photoresistor value so we can see it to debug code
    
 
-if((PrValue > PrInputA) && (millis()-lastReading>=sampleRate)) // timer starts
+if ((PrValue > (PrInputA+startupValue)) && (millis()-lastReading>=sampleRate)) // timer starts
 {
   digitalWrite(8, HIGH);
     // Turn the LED on, then pause
@@ -66,9 +73,9 @@ if((PrValue > PrInputA) && (millis()-lastReading>=sampleRate)) // timer starts
 
   FastLED.show();
   lastReading = millis();
-   delay(4000);
+   delay(500);
 }
-else if((PrValue > PrInputB) ) // above 2mins
+else if(PrValue > (startupValue+PrInputB) ) // above 20seconds
 {
   digitalWrite(8, HIGH);
     // Turn the LED on, then pause
@@ -77,6 +84,7 @@ else if((PrValue > PrInputB) ) // above 2mins
       }
 
   FastLED.show();
+  
 }
 else
 {
